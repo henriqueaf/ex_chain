@@ -14,14 +14,15 @@ defmodule ExChain.Blockchain do
   @spec new :: Blockchain.t()
   def new() do
     %__MODULE__{}
-    |> add_genesis()
+    |> add_genesis_block()
   end
 
   @spec add_block(Blockchain.t(), any) :: Blockchain.t()
   def add_block(blockchain = %__MODULE__{chain: chain}, data) do
     %Block{hash: last_hash} = List.last(chain)
+    index = length(chain)
 
-    %{blockchain | chain: chain ++ [Block.mine_block(last_hash, data)]}
+    %{blockchain | chain: chain ++ [Block.mine(last_hash, index, data)]}
   end
 
   @spec valid_chain?(Blockchain.t()) :: boolean()
@@ -44,7 +45,7 @@ defmodule ExChain.Blockchain do
     block.hash == Block.block_hash(block)
   end
 
-  defp add_genesis(blockchain = %__MODULE__{}) do
+  defp add_genesis_block(blockchain = %__MODULE__{}) do
     %{blockchain | chain: [Block.genesis()]}
   end
 end

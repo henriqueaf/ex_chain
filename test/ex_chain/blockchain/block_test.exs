@@ -3,43 +3,53 @@ defmodule ExChain.BlockTest do
   alias ExChain.Block
 
   describe "ExChain.Block" do
-    test "genesis block is valid" do
+    test "genesis/0 returns the genesis block" do
       assert %Block{
-        data: "genesis data",
-        hash: "44FB087CBCE03B9AA5253EE140D57BCA37C92C9B3A0112B7892B09997475248B",
-        previous_hash: "-",
-        timestamp: 1_625_596_693_967
+        index: 0,
+        timestamp: 1_625_596_693_967,
+        previous_hash: "0000000000000000000000000000000000000000000000000000000000000000",
+        hash: "D35A9D2B7EEE457D9A174D93E4A541CEDCF8D3FFAAD77CA11A6AD18C2793823F",
+        data: "genesis data"
       } == Block.genesis()
     end
 
-    test "mine_block returns new block with previous_hash" do
-      %Block{hash: hash} = Block.genesis()
+    test "mine/3 returns new mined block with previous_hash" do
+      %Block{hash: genesis_hash} = Block.genesis()
+      index = 1
 
       assert %Block{
-        data: "some data",
-        previous_hash: ^hash
-      } = Block.mine_block(hash, "some data")
+        index: ^index,
+        timestamp: _timestamp,
+        previous_hash: ^genesis_hash,
+        hash: _hash,
+        data: "some data"
+      } = Block.mine(genesis_hash, index, "some data")
     end
 
-    test "return a new block" do
+    test "new/4 returns a new block" do
+      index = 1
       timestamp = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
       previous_hash = "random_previous_block_hash"
       data = "some block data"
 
       assert %Block{
+        index: ^index,
         timestamp: ^timestamp,
-        hash: _hash,
+        hash: hash,
         previous_hash: ^previous_hash,
         data: ^data
-      } = Block.new(timestamp: timestamp, previous_hash: previous_hash, data: data)
+      } = Block.new(index: index, timestamp: timestamp, previous_hash: previous_hash, data: data)
+
+      assert String.length(hash) == 64
     end
 
-    test "return the block hash" do
+    test "block_hash/1 returns the block hash" do
+      index = 1
       timestamp = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
       previous_hash = "random_previous_block_hash"
       data = "some block data"
 
-      block = Block.new(timestamp: timestamp, previous_hash: previous_hash, data: data)
+      block = Block.new(index: index, timestamp: timestamp, previous_hash: previous_hash, data: data)
       assert block.hash == Block.block_hash(block)
     end
   end

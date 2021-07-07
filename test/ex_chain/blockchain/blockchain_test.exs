@@ -1,38 +1,48 @@
 defmodule ExChain.BlockchainTest do
   use ExUnit.Case
-  alias ExChain.Blockchain
-  alias ExChain.Block
+  alias ExChain.{Block, Blockchain}
 
   describe "ExChain.Blockchain" do
     setup(context) do
       {:ok, Map.put(context, :blockchain, Blockchain.new())}
     end
 
-    test "should start with the genesis block", %{blockchain: blockchain} do
-      assert %Block{
-        data: "genesis data",
-        hash: _hash,
-        previous_hash: "-",
-        timestamp: _timestamp
-      } = hd(blockchain.chain)
+    test "new/0 should start with the genesis block" do
+      %Blockchain{chain: [blockchain_genesis]} = Blockchain.new()
+
+      assert blockchain_genesis == Block.genesis()
     end
 
-    test "adds a new block", %{blockchain: blockchain} do
+    test "add_block/2 adds a new block to chain", %{blockchain: blockchain} do
       data = "foo"
-      blockchain = Blockchain.add_block(blockchain, data)
-      [_, block] = blockchain.chain
+      block =
+        blockchain
+        |> Blockchain.add_block(data)
+        |> Map.get(:chain)
+        |> List.last
+
       assert block.data == data
     end
 
-    test "validate a chain", %{blockchain: blockchain} do
+    test "valid_chain/1 validate a chain", %{blockchain: blockchain} do
       blockchain = Blockchain.add_block(blockchain, "some-block-data")
+      %Block{hash: genesis_hash} = genesis_block = Block.genesis()
+
+      assert [
+        ^genesis_block,
+        %Block{
+          index: 1,
+          timestamp: _timestamp,
+          previous_hash: ^genesis_hash,
+          hash: _hash,
+          data: "some-block-data",
+        }
+      ] = blockchain.chain
 
       assert Blockchain.valid_chain?(blockchain)
     end
 
-    test "should refute when temper data in existing chain", %{
-      blockchain: blockchain
-    } do
+    test "valid_chain/1 should refute when temper data in existing chain", %{blockchain: blockchain} do
       blockchain =
         blockchain
         |> Blockchain.add_block("blockchain-data-block-1")
