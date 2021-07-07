@@ -31,7 +31,7 @@ defmodule ExChain.BlockTest do
         hash: _hash,
         previous_hash: ^previous_hash,
         data: ^data
-      } = Block.new(timestamp, previous_hash, data)
+      } = Block.new(timestamp: timestamp, previous_hash: previous_hash, data: data)
     end
 
     test "return the block hash" do
@@ -39,7 +39,7 @@ defmodule ExChain.BlockTest do
       previous_hash = "random_previous_block_hash"
       data = "some block data"
 
-      block = Block.new(timestamp, previous_hash, data)
+      block = Block.new(timestamp: timestamp, previous_hash: previous_hash, data: data)
       assert block.hash == Block.block_hash(block)
     end
   end

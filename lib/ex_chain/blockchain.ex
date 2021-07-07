@@ -8,7 +8,7 @@ defmodule ExChain.Blockchain do
   defstruct ~w(chain)a
 
   @type t :: %Blockchain{
-    chain: [Block.t({})]
+    chain: [Block.t()]
   }
 
   @spec new :: Blockchain.t()
@@ -17,7 +17,7 @@ defmodule ExChain.Blockchain do
     |> add_genesis()
   end
 
-  @spec add_block(BlockChain.t(), any) :: BlockChain.t()
+  @spec add_block(Blockchain.t(), any) :: Blockchain.t()
   def add_block(blockchain = %__MODULE__{chain: chain}, data) do
     %Block{hash: last_hash} = List.last(chain)
 

@@ -14,8 +14,8 @@ defmodule ExChain.Block do
 
   defstruct ~w(timestamp previous_hash hash data)a
 
-  @spec new(pos_integer(), String.t(), any()) :: Block.t()
-  def new(timestamp, previous_hash, data) do
+  @spec new(timestamp: pos_integer(), previous_hash: String.t(), data: any()) :: Block.t()
+  def new(timestamp: timestamp, previous_hash: previous_hash, data: data) do
     %__MODULE__{}
     |> add_timestamp(timestamp)
     |> add_previous_hash(previous_hash)
@@ -23,25 +23,14 @@ defmodule ExChain.Block do
     |> add_hash()
   end
 
-  @spec get_str(Block.t()) :: String.t()
-  def get_str(block = %__MODULE__{}) do
-    """
-    Block
-    timestamp: #{block.timestamp}
-    previous_hash: #{block.previous_hash}
-    hash: #{block.hash}
-    data: #{block.data}
-    """
-  end
-
   @spec genesis() :: Block.t()
   def genesis() do
-    __MODULE__.new(1_625_596_693_967, "-", "genesis data")
+    __MODULE__.new(timestamp: 1_625_596_693_967, previous_hash: "-", data: "genesis data")
   end
 
   @spec mine_block(String.t(), any()) :: Block.t()
   def mine_block(previous_hash, data) do
-    __MODULE__.new(get_timestamp(), previous_hash, data)
+    __MODULE__.new(timestamp: get_timestamp(), previous_hash: previous_hash, data: data)
   end
 
   @spec block_hash(Block.t()) :: String.t()

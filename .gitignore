@@ -24,3 +24,7 @@ ex_chain-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Ignore Dialyzer PLTs files
+/priv/plts/*.plt
+/priv/plts/*.plt.hash
