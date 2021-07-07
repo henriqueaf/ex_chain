@@ -28,10 +28,17 @@ defmodule ExChain.Blockchain do
   @spec valid_chain?(Blockchain.t()) :: boolean()
   def valid_chain?(%__MODULE__{chain: chain}) do
     chain
-    |> Enum.chunk_every(2, 1, :discard)
+    |> Stream.chunk_every(2, 1, :discard)
     |> Enum.all?(fn [prev_block, block] ->
-      valid_previous_hash?(prev_block, block) && valid_block_hash?(block)
+      valid_indexes?(prev_block, block) && valid_previous_hash?(prev_block, block) && valid_block_hash?(block)
     end)
+  end
+
+  defp valid_indexes?(
+    %Block{index: previous_index} = _previous_block,
+    %Block{index: current_index} = _current_block
+  ) do
+    current_index == previous_index + 1
   end
 
   defp valid_previous_hash?(

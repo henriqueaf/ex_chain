@@ -1,5 +1,5 @@
 defmodule ExChain.BlockTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias ExChain.Block
 
   describe "ExChain.Block" do

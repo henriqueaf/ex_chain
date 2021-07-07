@@ -1,5 +1,5 @@
 defmodule ExChain.BlockchainTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias ExChain.{Block, Blockchain}
 
   describe "ExChain.Blockchain" do
@@ -25,17 +25,28 @@ defmodule ExChain.BlockchainTest do
     end
 
     test "valid_chain/1 validate a chain", %{blockchain: blockchain} do
-      blockchain = Blockchain.add_block(blockchain, "some-block-data")
+      blockchain =
+        blockchain
+        |> Blockchain.add_block("some-block-data-1")
+        |> Blockchain.add_block("some-block-data-2")
+
       %Block{hash: genesis_hash} = genesis_block = Block.genesis()
 
       assert [
         ^genesis_block,
         %Block{
           index: 1,
-          timestamp: _timestamp,
+          timestamp: _,
           previous_hash: ^genesis_hash,
-          hash: _hash,
-          data: "some-block-data",
+          hash: _,
+          data: "some-block-data-1",
+        },
+        %Block{
+          index: 2,
+          timestamp: _,
+          previous_hash: _,
+          hash: _,
+          data: "some-block-data-2",
         }
       ] = blockchain.chain
 
