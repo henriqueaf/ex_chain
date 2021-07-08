@@ -1,6 +1,7 @@
 defmodule ExChain.BlockTest do
   use ExUnit.Case, async: true
   alias ExChain.Block
+  doctest Block
 
   describe "ExChain.Block" do
     test "genesis/0 returns the genesis block" do
@@ -43,14 +44,14 @@ defmodule ExChain.BlockTest do
       assert String.length(hash) == 64
     end
 
-    test "block_hash/1 returns the block hash" do
+    test "generate_hash/1 returns the block hash" do
       index = 1
       timestamp = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
       previous_hash = "random_previous_block_hash"
       data = "some block data"
 
       block = Block.new(index: index, timestamp: timestamp, previous_hash: previous_hash, data: data)
-      assert block.hash == Block.block_hash(block)
+      assert block.hash == Block.generate_hash(index, timestamp, previous_hash, data)
     end
   end
 end
