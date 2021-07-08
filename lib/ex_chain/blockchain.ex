@@ -11,12 +11,40 @@ defmodule ExChain.Blockchain do
     chain: [Block.t()]
   }
 
+  @doc """
+  Create a new Blockchain with a Genesis Block on it's chain.
+
+  ## Examples
+    iex> ExChain.Blockchain.new()
+    %ExChain.Blockchain{
+      chain: [ExChain.Block.genesis()]
+    }
+  """
   @spec new :: Blockchain.t()
   def new() do
-    %__MODULE__{}
-    |> add_genesis_block()
+    %__MODULE__{
+      chain: [Block.genesis()]
+    }
   end
 
+  @doc """
+  Add a new block to chain with the given data.
+
+  ## Parameters
+    - blockchain: The Blockchain that Block will enter.
+    - data: The data that will go into the Block.
+
+  ## Examples
+    iex> blockchain = ExChain.Blockchain.new()
+    iex> %ExChain.Blockchain{chain: [_genesis_block, added_block]} = ExChain.Blockchain.add_block(blockchain, "some data")
+    iex> %ExChain.Block{
+    ...>  index: 1,
+    ...>  timestamp: _timestamp,
+    ...>  previous_hash: _genesis_block_hash,
+    ...>  data: "some data",
+    ...>  hash: _hash
+    ...>} = added_block
+  """
   @spec add_block(Blockchain.t(), any) :: Blockchain.t()
   def add_block(blockchain = %__MODULE__{chain: chain}, data) do
     %Block{hash: last_hash} = List.last(chain)
@@ -25,6 +53,17 @@ defmodule ExChain.Blockchain do
     %{blockchain | chain: chain ++ [Block.mine(last_hash, index, data)]}
   end
 
+  @doc """
+  Checks if the Blockchain has a valid chain structure.
+
+  ## Parameters
+    - blockchain: The Blockchain to be validated.
+
+  ## Examples
+    iex> blockchain = ExChain.Blockchain.new()
+    iex> ExChain.Blockchain.valid_chain?(blockchain)
+    true
+  """
   @spec valid_chain?(Blockchain.t()) :: boolean()
   def valid_chain?(%__MODULE__{chain: chain}) do
     chain
@@ -49,10 +88,6 @@ defmodule ExChain.Blockchain do
   end
 
   defp valid_block_hash?(block) do
-    block.hash == Block.block_hash(block)
-  end
-
-  defp add_genesis_block(blockchain = %__MODULE__{}) do
-    %{blockchain | chain: [Block.genesis()]}
+    block.hash == Block.generate_hash(block.index, block.timestamp, block.previous_hash, block.data)
   end
 end

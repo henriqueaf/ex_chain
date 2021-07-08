@@ -1,6 +1,7 @@
 defmodule ExChain.BlockchainTest do
   use ExUnit.Case, async: true
   alias ExChain.{Block, Blockchain}
+  doctest Blockchain
 
   describe "ExChain.Blockchain" do
     setup(context) do
