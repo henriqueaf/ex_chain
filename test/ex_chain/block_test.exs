@@ -20,38 +20,30 @@ defmodule ExChain.BlockTest do
 
       assert %Block{
         index: ^index,
-        timestamp: _timestamp,
+        timestamp: timestamp,
         previous_hash: ^genesis_hash,
-        hash: _hash,
-        data: "some data"
-      } = Block.mine(genesis_hash, index, "some data")
-    end
-
-    test "new/4 returns a new block" do
-      index = 1
-      timestamp = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
-      previous_hash = "random_previous_block_hash"
-      data = "some block data"
-
-      assert %Block{
-        index: ^index,
-        timestamp: ^timestamp,
         hash: hash,
-        previous_hash: ^previous_hash,
-        data: ^data
-      } = Block.new(index: index, timestamp: timestamp, previous_hash: previous_hash, data: data)
+        data: "some data"
+      } = Block.mine(previous_hash: genesis_hash, index: index, data: "some data")
 
       assert String.length(hash) == 64
+
+      current_timestamp = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+      assert current_timestamp > timestamp
     end
 
     test "generate_hash/1 returns the block hash" do
       index = 1
-      timestamp = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
       previous_hash = "random_previous_block_hash"
       data = "some block data"
 
-      block = Block.new(index: index, timestamp: timestamp, previous_hash: previous_hash, data: data)
-      assert block.hash == Block.generate_hash(index, timestamp, previous_hash, data)
+      block = Block.mine(previous_hash: previous_hash, index: index, data: data)
+      assert block.hash == Block.generate_hash(
+        index: index,
+        timestamp: block.timestamp,
+        previous_hash: previous_hash,
+        data: data
+      )
     end
   end
 end

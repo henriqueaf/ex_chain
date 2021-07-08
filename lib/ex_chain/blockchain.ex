@@ -50,7 +50,7 @@ defmodule ExChain.Blockchain do
     %Block{hash: last_hash} = List.last(chain)
     index = length(chain)
 
-    %{blockchain | chain: chain ++ [Block.mine(last_hash, index, data)]}
+    %{blockchain | chain: chain ++ [Block.mine(previous_hash: last_hash, index: index, data: data)]}
   end
 
   @doc """
@@ -88,6 +88,11 @@ defmodule ExChain.Blockchain do
   end
 
   defp valid_block_hash?(block) do
-    block.hash == Block.generate_hash(block.index, block.timestamp, block.previous_hash, block.data)
+    block.hash == Block.generate_hash(
+      index: block.index,
+      timestamp: block.timestamp,
+      previous_hash: block.previous_hash,
+      data: block.data
+    )
   end
 end
