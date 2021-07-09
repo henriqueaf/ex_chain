@@ -37,23 +37,23 @@ defmodule ExChain.Block do
   Mine a new Block (generates a new Block to be added on Blockchain).
 
   ## Parameters
+    - timestamp: Integer that represents Block datetime as seconds since 1970-01-01T00:00 UTC.
     - previous_hash: String that represents the previous block hash.
     - data: Data to be save on block.
     - difficulty: The Proof-of-Work difficulty.
 
   ## Examples
-    iex> block = ExChain.Block.mine(previous_hash: "some_previous_block_hash", data: "some data", difficulty: 0)
+    iex> block = ExChain.Block.mine(timestamp: 1_625_596_693_967, previous_hash: "some_previous_block_hash", data: "some data", difficulty: 0)
     iex> %ExChain.Block{
-    ...>  timestamp: _timestamp,
+    ...>  timestamp: 1_625_596_693_967,
     ...>  previous_hash: "some_previous_block_hash",
     ...>  data: "some data",
     ...>  nonce: 0,
     ...>  hash: _hash
     ...>} = block
   """
-  @spec mine(previous_hash: String.t(), data: any(), difficulty: non_neg_integer()) :: Block.t()
-  def mine(previous_hash: previous_hash, data: data, difficulty: difficulty) do
-    timestamp = get_timestamp()
+  @spec mine(timestamp: pos_integer(), previous_hash: String.t(), data: any(), difficulty: non_neg_integer()) :: Block.t()
+  def mine(timestamp: timestamp, previous_hash: previous_hash, data: data, difficulty: difficulty) do
     proof_of_work(timestamp, previous_hash, data, 0, difficulty)
   end
 
@@ -104,6 +104,4 @@ defmodule ExChain.Block do
       hash: generate_hash(timestamp: timestamp, previous_hash: previous_hash, data: data, nonce: nonce)
     }
   end
-
-  defp get_timestamp(), do: DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 end

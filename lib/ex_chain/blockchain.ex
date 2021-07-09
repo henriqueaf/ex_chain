@@ -55,7 +55,7 @@ defmodule ExChain.Blockchain do
   def add_block(blockchain = %__MODULE__{chain: chain, difficulty: difficulty}, data) do
     %Block{hash: last_hash} = List.last(chain)
 
-    %{blockchain | chain: chain ++ [Block.mine(previous_hash: last_hash, data: data, difficulty: difficulty)]}
+    %{blockchain | chain: chain ++ [Block.mine(timestamp: get_timestamp(), previous_hash: last_hash, data: data, difficulty: difficulty)]}
   end
 
   @doc """
@@ -93,4 +93,6 @@ defmodule ExChain.Blockchain do
       nonce: block.nonce
     )
   end
+
+  defp get_timestamp(), do: DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 end
