@@ -5,11 +5,11 @@ defmodule ExChain.BlockchainTest do
 
   describe "ExChain.Blockchain" do
     setup(context) do
-      {:ok, Map.put(context, :blockchain, Blockchain.new())}
+      {:ok, Map.put(context, :blockchain, Blockchain.new(0))}
     end
 
     test "new/0 should start with the genesis block" do
-      %Blockchain{chain: [blockchain_genesis]} = Blockchain.new()
+      %Blockchain{chain: [blockchain_genesis]} = Blockchain.new(0)
 
       assert blockchain_genesis == Block.genesis()
     end
@@ -41,6 +41,7 @@ defmodule ExChain.BlockchainTest do
           previous_hash: ^genesis_hash,
           hash: _,
           data: "some-block-data-1",
+          nonce: _,
         },
         %Block{
           index: 2,
@@ -48,6 +49,7 @@ defmodule ExChain.BlockchainTest do
           previous_hash: _,
           hash: _,
           data: "some-block-data-2",
+          nonce: _,
         }
       ] = blockchain.chain
 

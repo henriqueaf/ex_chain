@@ -9,8 +9,9 @@ defmodule ExChain.BlockTest do
         index: 0,
         timestamp: 1_625_596_693_967,
         previous_hash: "0000000000000000000000000000000000000000000000000000000000000000",
-        hash: "D35A9D2B7EEE457D9A174D93E4A541CEDCF8D3FFAAD77CA11A6AD18C2793823F",
-        data: "genesis data"
+        hash: "BD1B8342681227DB6B4A35C52A1047FE4E3261B3942D5EFC42D3431EED75505E",
+        data: "genesis data",
+        nonce: 0
       } == Block.genesis()
     end
 
@@ -23,8 +24,9 @@ defmodule ExChain.BlockTest do
         timestamp: timestamp,
         previous_hash: ^genesis_hash,
         hash: hash,
-        data: "some data"
-      } = Block.mine(previous_hash: genesis_hash, index: index, data: "some data")
+        data: "some data",
+        nonce: 0
+      } = Block.mine(previous_hash: genesis_hash, index: index, data: "some data", difficulty: 0)
 
       assert String.length(hash) == 64
 
@@ -37,12 +39,13 @@ defmodule ExChain.BlockTest do
       previous_hash = "random_previous_block_hash"
       data = "some block data"
 
-      block = Block.mine(previous_hash: previous_hash, index: index, data: data)
+      block = Block.mine(previous_hash: previous_hash, index: index, data: data, difficulty: 0)
       assert block.hash == Block.generate_hash(
         index: index,
         timestamp: block.timestamp,
         previous_hash: previous_hash,
-        data: data
+        data: data,
+        nonce: 0
       )
     end
   end

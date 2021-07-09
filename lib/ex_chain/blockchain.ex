@@ -5,7 +5,7 @@ defmodule ExChain.Blockchain do
   alias __MODULE__
   alias ExChain.Block
 
-  defstruct ~w(chain)a
+  defstruct ~w(difficulty chain)a
 
   @type t :: %Blockchain{
     chain: [Block.t()]
@@ -14,15 +14,20 @@ defmodule ExChain.Blockchain do
   @doc """
   Create a new Blockchain with a Genesis Block on it's chain.
 
+  ## Parameters
+    - difficulty: The Blockchain Proof-of-Work difficulty.
+
   ## Examples
-    iex> ExChain.Blockchain.new()
+    iex> ExChain.Blockchain.new(0)
     %ExChain.Blockchain{
+      difficulty: 0,
       chain: [ExChain.Block.genesis()]
     }
   """
-  @spec new :: Blockchain.t()
-  def new() do
+  @spec new(non_neg_integer()) :: Blockchain.t()
+  def new(difficulty) do
     %__MODULE__{
+      difficulty: difficulty,
       chain: [Block.genesis()]
     }
   end
@@ -35,22 +40,23 @@ defmodule ExChain.Blockchain do
     - data: The data that will go into the Block.
 
   ## Examples
-    iex> blockchain = ExChain.Blockchain.new()
+    iex> blockchain = ExChain.Blockchain.new(0)
     iex> %ExChain.Blockchain{chain: [_genesis_block, added_block]} = ExChain.Blockchain.add_block(blockchain, "some data")
     iex> %ExChain.Block{
     ...>  index: 1,
     ...>  timestamp: _timestamp,
     ...>  previous_hash: _genesis_block_hash,
     ...>  data: "some data",
-    ...>  hash: _hash
+    ...>  hash: _hash,
+    ...>  nonce: _nonce
     ...>} = added_block
   """
   @spec add_block(Blockchain.t(), any) :: Blockchain.t()
-  def add_block(blockchain = %__MODULE__{chain: chain}, data) do
+  def add_block(blockchain = %__MODULE__{chain: chain, difficulty: difficulty}, data) do
     %Block{hash: last_hash} = List.last(chain)
     index = length(chain)
 
-    %{blockchain | chain: chain ++ [Block.mine(previous_hash: last_hash, index: index, data: data)]}
+    %{blockchain | chain: chain ++ [Block.mine(previous_hash: last_hash, index: index, data: data, difficulty: difficulty)]}
   end
 
   @doc """
@@ -60,7 +66,7 @@ defmodule ExChain.Blockchain do
     - blockchain: The Blockchain to be validated.
 
   ## Examples
-    iex> blockchain = ExChain.Blockchain.new()
+    iex> blockchain = ExChain.Blockchain.new(0)
     iex> ExChain.Blockchain.valid_chain?(blockchain)
     true
   """
@@ -92,7 +98,8 @@ defmodule ExChain.Blockchain do
       index: block.index,
       timestamp: block.timestamp,
       previous_hash: block.previous_hash,
-      data: block.data
+      data: block.data,
+      nonce: block.nonce
     )
   end
 end
