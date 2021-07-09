@@ -8,6 +8,7 @@ defmodule ExChain.Blockchain do
   defstruct ~w(difficulty chain)a
 
   @type t :: %Blockchain{
+    difficulty: non_neg_integer(),
     chain: [Block.t()]
   }
 
@@ -43,7 +44,6 @@ defmodule ExChain.Blockchain do
     iex> blockchain = ExChain.Blockchain.new(0)
     iex> %ExChain.Blockchain{chain: [_genesis_block, added_block]} = ExChain.Blockchain.add_block(blockchain, "some data")
     iex> %ExChain.Block{
-    ...>  index: 1,
     ...>  timestamp: _timestamp,
     ...>  previous_hash: _genesis_block_hash,
     ...>  data: "some data",
@@ -51,12 +51,11 @@ defmodule ExChain.Blockchain do
     ...>  nonce: _nonce
     ...>} = added_block
   """
-  @spec add_block(Blockchain.t(), any) :: Blockchain.t()
+  @spec add_block(Blockchain.t(), [any()]) :: Blockchain.t()
   def add_block(blockchain = %__MODULE__{chain: chain, difficulty: difficulty}, data) do
     %Block{hash: last_hash} = List.last(chain)
-    index = length(chain)
 
-    %{blockchain | chain: chain ++ [Block.mine(previous_hash: last_hash, index: index, data: data, difficulty: difficulty)]}
+    %{blockchain | chain: chain ++ [Block.mine(previous_hash: last_hash, data: data, difficulty: difficulty)]}
   end
 
   @doc """
@@ -75,15 +74,8 @@ defmodule ExChain.Blockchain do
     chain
     |> Stream.chunk_every(2, 1, :discard)
     |> Enum.all?(fn [prev_block, block] ->
-      valid_indexes?(prev_block, block) && valid_previous_hash?(prev_block, block) && valid_block_hash?(block)
+      valid_previous_hash?(prev_block, block) && valid_block_hash?(block)
     end)
-  end
-
-  defp valid_indexes?(
-    %Block{index: previous_index} = _previous_block,
-    %Block{index: current_index} = _current_block
-  ) do
-    current_index == previous_index + 1
   end
 
   defp valid_previous_hash?(
@@ -95,7 +87,6 @@ defmodule ExChain.Blockchain do
 
   defp valid_block_hash?(block) do
     block.hash == Block.generate_hash(
-      index: block.index,
       timestamp: block.timestamp,
       previous_hash: block.previous_hash,
       data: block.data,

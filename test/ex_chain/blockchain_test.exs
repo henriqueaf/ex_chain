@@ -36,7 +36,6 @@ defmodule ExChain.BlockchainTest do
       assert [
         ^genesis_block,
         %Block{
-          index: 1,
           timestamp: _,
           previous_hash: ^genesis_hash,
           hash: _,
@@ -44,7 +43,6 @@ defmodule ExChain.BlockchainTest do
           nonce: _,
         },
         %Block{
-          index: 2,
           timestamp: _,
           previous_hash: _,
           hash: _,
