@@ -3,7 +3,7 @@ defmodule ExChain.Blockchain do
   This module contains the blockchain related functions
   """
   alias __MODULE__
-  alias ExChain.Block
+  alias ExChain.Blockchain.Block
 
   defstruct ~w(difficulty chain)a
 
@@ -22,7 +22,7 @@ defmodule ExChain.Blockchain do
     iex> ExChain.Blockchain.new(0)
     %ExChain.Blockchain{
       difficulty: 0,
-      chain: [ExChain.Block.genesis()]
+      chain: [ExChain.Blockchain.Block.genesis()]
     }
   """
   @spec new(non_neg_integer()) :: Blockchain.t()
@@ -43,7 +43,7 @@ defmodule ExChain.Blockchain do
   ## Examples
     iex> blockchain = ExChain.Blockchain.new(0)
     iex> %ExChain.Blockchain{chain: [_genesis_block, added_block]} = ExChain.Blockchain.add_block(blockchain, "some data")
-    iex> %ExChain.Block{
+    iex> %ExChain.Blockchain.Block{
     ...>  timestamp: _timestamp,
     ...>  previous_hash: _genesis_block_hash,
     ...>  data: "some data",

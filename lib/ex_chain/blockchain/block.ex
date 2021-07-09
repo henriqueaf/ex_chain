@@ -1,4 +1,4 @@
-defmodule ExChain.Block do
+defmodule ExChain.Blockchain.Block do
   @moduledoc """
   This module represents a Block in a Blockchain service
   """
@@ -19,8 +19,8 @@ defmodule ExChain.Block do
   Create a new Genesis Block, that is the first block on Blockchain.
 
   ## Examples
-    iex> ExChain.Block.genesis()
-    %ExChain.Block{
+    iex> ExChain.Blockchain.Block.genesis()
+    %ExChain.Blockchain.Block{
       timestamp: 1625596693967,
       previous_hash: "0000000000000000000000000000000000000000000000000000000000000000",
       data: "genesis data",
@@ -43,8 +43,8 @@ defmodule ExChain.Block do
     - difficulty: The Proof-of-Work difficulty.
 
   ## Examples
-    iex> block = ExChain.Block.mine(timestamp: 1_625_596_693_967, previous_hash: "some_previous_block_hash", data: "some data", difficulty: 0)
-    iex> %ExChain.Block{
+    iex> block = ExChain.Blockchain.Block.mine(timestamp: 1_625_596_693_967, previous_hash: "some_previous_block_hash", data: "some data", difficulty: 0)
+    iex> %ExChain.Blockchain.Block{
     ...>  timestamp: 1_625_596_693_967,
     ...>  previous_hash: "some_previous_block_hash",
     ...>  data: "some data",
@@ -80,7 +80,7 @@ defmodule ExChain.Block do
     - nonce: A number to help on Proof-of-Work algorithm
 
   ## Examples
-    iex> ExChain.Block.generate_hash(
+    iex> ExChain.Blockchain.Block.generate_hash(
     ...>   timestamp: 1625596693967,
     ...>   previous_hash: "D35A9D2B7EEE457D9A174D93E4A541CEDCF8D3FFAAD77CA11A6AD18C2793823F",
     ...>   data: "some data",

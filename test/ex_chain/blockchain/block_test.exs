@@ -1,9 +1,9 @@
-defmodule ExChain.BlockTest do
+defmodule ExChain.Blockchain.BlockTest do
   use ExUnit.Case, async: true
-  alias ExChain.Block
+  alias ExChain.Blockchain.Block
   doctest Block
 
-  describe "ExChain.Block" do
+  describe "ExChain.Blockchain.Block" do
     test "genesis/0 returns the genesis block" do
       assert %Block{
         timestamp: 1_625_596_693_967,

@@ -1,1 +1,2 @@
-alias ExChain.{Blockchain, Block}
+alias ExChain.Blockchain
+alias ExChain.Blockchain.Block
