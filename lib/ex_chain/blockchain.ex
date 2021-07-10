@@ -5,30 +5,24 @@ defmodule ExChain.Blockchain do
   alias __MODULE__
   alias ExChain.Blockchain.Block
 
-  defstruct ~w(difficulty chain)a
+  defstruct ~w(chain)a
 
   @type t :: %Blockchain{
-    difficulty: non_neg_integer(),
     chain: [Block.t()]
   }
 
   @doc """
   Create a new Blockchain with a Genesis Block on it's chain.
 
-  ## Parameters
-    - difficulty: The Blockchain Proof-of-Work difficulty.
-
   ## Examples
     iex> ExChain.Blockchain.new(0)
     %ExChain.Blockchain{
-      difficulty: 0,
       chain: [ExChain.Blockchain.Block.genesis()]
     }
   """
-  @spec new(non_neg_integer()) :: Blockchain.t()
-  def new(difficulty) do
+  @spec new() :: Blockchain.t()
+  def new() do
     %__MODULE__{
-      difficulty: difficulty,
       chain: [Block.genesis()]
     }
   end
@@ -38,11 +32,12 @@ defmodule ExChain.Blockchain do
 
   ## Parameters
     - blockchain: The Blockchain that Block will enter.
-    - data: The data that will go into the Block.
+    - block: The block that will go into the chain.
 
   ## Examples
-    iex> blockchain = ExChain.Blockchain.new(0)
-    iex> %ExChain.Blockchain{chain: [_genesis_block, added_block]} = ExChain.Blockchain.add_block(blockchain, "some data")
+    iex> blockchain = ExChain.Blockchain.new()
+    iex> block = ExChain.Blockchain.Block.genesis()
+    iex> %ExChain.Blockchain{chain: [_genesis_block, added_block]} = ExChain.Blockchain.add_block(blockchain, block)
     iex> %ExChain.Blockchain.Block{
     ...>  timestamp: _timestamp,
     ...>  previous_hash: _genesis_block_hash,
@@ -51,11 +46,11 @@ defmodule ExChain.Blockchain do
     ...>  nonce: _nonce
     ...>} = added_block
   """
-  @spec add_block(Blockchain.t(), [any()]) :: Blockchain.t()
-  def add_block(blockchain = %__MODULE__{chain: chain, difficulty: difficulty}, data) do
+  @spec add_block(Blockchain.t(), Block.t()) :: Blockchain.t()
+  def add_block(blockchain = %__MODULE__{chain: chain}, block) do
     %Block{hash: last_hash} = List.last(chain)
 
-    %{blockchain | chain: chain ++ [Block.mine(timestamp: get_timestamp(), previous_hash: last_hash, data: data, difficulty: difficulty)]}
+    %{blockchain | chain: chain ++ [block]}
   end
 
   @doc """
@@ -93,6 +88,4 @@ defmodule ExChain.Blockchain do
       nonce: block.nonce
     )
   end
-
-  defp get_timestamp(), do: DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 end

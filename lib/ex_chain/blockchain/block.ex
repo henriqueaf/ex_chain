@@ -57,7 +57,7 @@ defmodule ExChain.Blockchain.Block do
     proof_of_work(timestamp, previous_hash, data, 0, difficulty)
   end
 
-  @spec proof_of_work(non_neg_integer(), String.t(), [any()], non_neg_integer(), non_neg_integer()) :: Block.t()
+  @spec proof_of_work(non_neg_integer(), String.t(), any(), non_neg_integer(), non_neg_integer()) :: Block.t()
   defp proof_of_work(timestamp, previous_hash, data, nonce, difficulty) do
     block = new(timestamp, previous_hash, data, nonce)
     zeros = String.duplicate("0", difficulty)
